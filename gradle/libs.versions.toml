@@ -1,0 +1,53 @@
+[versions]
+
+# SDK
+minimum-sdk-version = "28"
+target-sdk-version = "33"
+compile-sdk-version = "android-33"
+
+agp = "7.4.2"
+kotlin = "1.8.21"
+coreKtx = "1.10.1"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+appcompat = "1.6.1"
+material = "1.9.0"
+material3-version = "1.1.1"
+
+ksp-version = "1.8.21-1.0.11"
+
+# Jetpack Compose
+compose-ui-version = "1.4.3"
+compose-compiler-version = "1.4.7"
+
+# Activity UI
+activity-compose-version = "1.7.2"
+
+# Dagger hilt
+dagger-hilt-version = "2.47"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose-version" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose-ui-version" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3-version" }
+
+
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt-version" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger-hilt-version" }
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "dagger-hilt-version" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-hilt-version" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+com-android-library = { id = "com.android.library", version.ref = "agp" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-version" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt-version" }

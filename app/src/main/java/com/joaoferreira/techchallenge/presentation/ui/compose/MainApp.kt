@@ -30,9 +30,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.joaoferreira.techchallenge.R
 import com.joaoferreira.techchallenge.presentation.ui.compose.applist.AppList
 import com.joaoferreira.techchallenge.presentation.ui.compose.editorschoice.EditorsChoiceList
 
@@ -49,9 +53,9 @@ fun MainApp() {
                     title = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                imageVector = Icons.Filled.Person,
+                                imageVector = ImageVector.vectorResource(R.drawable.aptoide_logo),
                                 contentDescription = "Account details",
-                                tint = Color.White
+                                tint = Color.Unspecified
                             )
                             Text(
                                 "Aptoide",
@@ -72,7 +76,9 @@ fun MainApp() {
                 )
             },
         ) {
-            Column(modifier = Modifier.fillMaxSize().padding(top = it.calculateTopPadding())) {
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(top = it.calculateTopPadding())) {
                 Row(
                     modifier = Modifier
                         .weight(2f)

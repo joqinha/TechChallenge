@@ -59,7 +59,7 @@ fun EditorsChoiceList(appsViewModel: AppsViewModel = hiltViewModel()) {
                 items(Int.MAX_VALUE) { appItem ->
                     val app = editorsChoiceList[appItem % editorsChoiceList.size]
                     EditorsChoiceCard(
-                        imageUrl = app.graphicUrl,
+                        imageUrl = app.graphicUrl ?: app.iconUrl ?: "",
                         description = app.name,
                         rating = app.rating.toFloat()
                     )

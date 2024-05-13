@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -54,11 +56,14 @@ fun AppCard(
                 .padding(10.dp)
         ) {
             AppCardBackground(background = imageUrl)
-            Column {
+            Column(modifier = Modifier.width(90.dp)) {
                 Text(
                     text = description,
-                    textAlign = TextAlign.Center,
-                    fontSize = 16.sp
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 32.dp), // Set a fixed height
+                    overflow = TextOverflow.Clip,
+                    maxLines = 2
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

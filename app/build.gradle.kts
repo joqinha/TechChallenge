@@ -42,20 +42,25 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation(project(":allapps"))
+
+    implementation(rootProject.libs.androidx.core.ktx)
+    implementation(rootProject.libs.androidx.appcompat)
+    implementation(rootProject.libs.material)
 
     implementation(rootProject.libs.compose.ui)
     implementation(rootProject.libs.compose.material3)
     implementation(rootProject.libs.activity.compose)
+    implementation(rootProject.libs.lifecycle.viewmodel.compose)
+    implementation(rootProject.libs.coil)
 
     implementation(rootProject.libs.hilt.android)
+    implementation(rootProject.libs.hilt.navigation.compose)
     ksp(rootProject.libs.hilt.compiler)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(rootProject.libs.junit)
+    androidTestImplementation(rootProject.libs.androidx.junit)
+    androidTestImplementation(rootProject.libs.androidx.espresso.core)
     androidTestImplementation(rootProject.libs.hilt.android)
     androidTestImplementation(rootProject.libs.hilt.android.testing)
     kspAndroidTest(rootProject.libs.hilt.compiler)

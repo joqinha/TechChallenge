@@ -22,9 +22,6 @@ subprojects {
                 defaultConfig {
                     minSdk = libs.versions.minimum.sdk.version.get().toInt()
                     targetSdk = libs.versions.target.sdk.version.get().toInt()
-
-                    useLibrary("android.car")
-
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 }
 

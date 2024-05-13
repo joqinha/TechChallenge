@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "TechChallenge"
 include(":app")
- 
+include("allapps")
+project(":allapps").projectDir = file("allapps")

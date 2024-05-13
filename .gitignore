@@ -16,6 +16,7 @@ proguard/
 captures/
 *.iml
 .idea
+.idea/*
 .externalNativeBuild
 .cxx/
 freeline.py

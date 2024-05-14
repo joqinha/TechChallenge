@@ -4,12 +4,26 @@ import com.android.build.gradle.BaseExtension
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
+    alias(libs.plugins.detekt)
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.dagger.hilt) apply false
     alias(libs.plugins.com.android.library) apply false
 }
 
 subprojects {
+    apply(plugin = rootProject.libs.plugins.detekt.get().pluginId)
+
+    detekt {
+        config.setFrom("${project.rootDir}/tools/detekt/detekt.yml")
+        autoCorrect = true
+        buildUponDefaultConfig = true
+    }
+
+    dependencies {
+        detektPlugins(rootProject.libs.detekt.formatting)
+        detektPlugins(rootProject.libs.detekt.cli)
+    }
+
     tasks.withType<Test> {
         useJUnitPlatform()
     }

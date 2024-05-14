@@ -7,6 +7,7 @@ import com.joaoferreira.techchallenge.allapps.data.networkmonitor.NetworkMonitor
 import com.joaoferreira.techchallenge.allapps.domain.AppDetails
 import com.joaoferreira.techchallenge.allapps.domain.network.NetworkStatus
 import com.joaoferreira.techchallenge.allapps.domain.response.AppData
+import com.joaoferreira.techchallenge.common.TAG
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,17 +18,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * Implementation of AppsRepository
+ */
 class AppsRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val appDao: AppDao,
     private val networkMonitor: NetworkMonitor,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AppsRepository {
-
     private val _appDetailsList = MutableStateFlow<List<AppDetails>>(emptyList())
     private val appDetailsList = _appDetailsList.asStateFlow()
-
-    private var localAppDetails: List<AppDetails> = emptyList()
 
     init {
         observeChangesInNetworking()
@@ -35,13 +36,16 @@ class AppsRepositoryImpl @Inject constructor(
 
     override fun getListApps(): Flow<List<AppDetails>> = appDetailsList
 
+    @Suppress("ComplexCondition")
     private fun observeChangesInNetworking() {
         CoroutineScope(dispatcher).launch {
             networkMonitor.networkStatus.collect {
-                Log.d("AppsRepositoryImpl", "observeChangesInNetworking: $it")
+                Log.d(TAG, "observeChangesInNetworking: $it")
                 if (it == NetworkStatus.INITIAL ||
                     it == NetworkStatus.AVAILABLE ||
-                    it == NetworkStatus.LINK_PROPERTIES_CHANGED) {
+                    it == NetworkStatus.BLOCKED_STATUS_CHANGED ||
+                    it == NetworkStatus.LINK_PROPERTIES_CHANGED
+                ) {
                     val fetchedApps = fetchAppDetailsFromApi()
                     updateDb(fetchedApps)
                     updateAppDetailsList(fetchedApps)
@@ -55,54 +59,64 @@ class AppsRepositoryImpl @Inject constructor(
 
     private fun updateAppDetailsList(updatedList: List<AppDetails>) {
         _appDetailsList.value = updatedList
-        Log.d("AppsRepositoryImpl", "updateAppDetailsList: ${_appDetailsList.value}")
+        Log.d(TAG, "updateAppDetailsList: ${_appDetailsList.value}")
     }
 
+    @Suppress("LabeledExpression", "TooGenericExceptionCaught")
     private suspend fun fetchAppDetailsFromApi(): List<AppDetails> {
         return withContext(dispatcher) {
             try {
                 val response = apiService.listApps().execute()
                 if (response.isSuccessful) {
-
                     if (response.body()?.status == "OK") {
                         val apps = response.body()?.responses?.listApps?.datasets?.all?.data?.list
                             ?: emptyList()
-                        Log.d("AppsRepositoryImpl", "fetchAppDetailsFromApi: $apps")
+                        Log.d(TAG, "fetchAppDetailsFromApi: $apps")
                         val appDetailsList = convertListAppDataToAppDetails(apps)
                         return@withContext appDetailsList
                     } else {
+                        val localApps = loadAppsFromLocalDb()
                         Log.d(
-                            "AppsRepositoryImpl",
-                            "fetchAppDetailsFromApi: Unsuccessful status: ${response.body()?.status}"
+                            TAG,
+                            "fetchAppDetailsFromApi: Unsuccessful status: " +
+                                "${response.body()?.status}, " +
+                                "List of apps: $localApps"
                         )
-                        return@withContext localAppDetails
+                        return@withContext localApps
                     }
                 } else {
                     Log.d(
-                        "AppsRepositoryImpl",
+                        TAG,
                         "fetchAppDetailsFromApi: Unsuccessful response: ${response.code()}"
                     )
                 }
             } catch (e: Exception) {
-                Log.d("AppsRepositoryImpl", "fetchAppDetailsFromApi: Exception ${e.message}")
-
+                Log.d(TAG, "fetchAppDetailsFromApi: Exception ${e.message}")
             }
-            return@withContext localAppDetails
+            val localApps = loadAppsFromLocalDb()
+            Log.d(
+                TAG,
+                "fetchAppDetailsFromApi: Error list of apps $localApps"
+            )
+            return@withContext localApps
         }
     }
 
     private suspend fun updateDb(appDetailsList: List<AppDetails>) {
-        Log.d("AppsRepositoryImpl", "updateDb: $appDetailsList")
-        appDao.deleteAllEntries()
-        val appInfoList = convertListAppDetailsToAppInfo(appDetailsList)
-        appInfoList.forEach { appDao.insertApp(it) }
+        if (appDetailsList.isNotEmpty()) {
+            Log.d(TAG, "updateDb: $appDetailsList")
+            appDao.deleteAllEntries()
+            val appInfoList = convertListAppDetailsToAppInfo(appDetailsList)
+            appInfoList.forEach { appDao.insertApp(it) }
+        }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun loadAppsFromLocalDb(): List<AppDetails> {
         try {
             val appInfoList = appDao.getAllApps()
             if (appInfoList.isEmpty()) {
-                Log.d("AppsRepositoryImpl", "loadAppsFromLocalDb: No data in DB")
+                Log.d(TAG, "loadAppsFromLocalDb: No data in DB")
                 return emptyList()
             }
             val appDetailsList = mutableListOf<AppDetails>()
@@ -119,10 +133,10 @@ class AppsRepositoryImpl @Inject constructor(
                 )
                 appDetailsList.add(appDetails)
             }
-            Log.d("AppsRepositoryImpl", "loadAppsFromLocalDb: $appDetailsList")
+            Log.d(TAG, "loadAppsFromLocalDb: $appDetailsList")
             return appDetailsList
         } catch (e: Exception) {
-            Log.d("AppsRepositoryImpl", "loadAppsFromLocalDb: Exception ${e.message}")
+            Log.d(TAG, "loadAppsFromLocalDb: Exception ${e.message}")
             return emptyList()
         }
     }

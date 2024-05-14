@@ -10,6 +10,9 @@ import androidx.compose.ui.graphics.Color
 import com.joaoferreira.techchallenge.presentation.ui.compose.MainApp
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * MainActivity
+ */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 

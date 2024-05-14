@@ -38,6 +38,21 @@ coil-version = "2.4.0"
 
 room-version = "2.4.0"
 
+detekt-version = "1.23.1"
+
+# Tests frameworks
+android-test-core-ktx-version = "1.5.0"
+test-runner-version = "1.5.2"
+test-rules-version = "1.5.0"
+junit5-version = "5.8.2"
+junit-ext-version = "1.1.5"
+espresso-version = "3.5.1"
+mockk-version = "1.13.5"
+android-test-core-ktx = "1.5.0"
+lifecycle-test-version = "2.4.1"
+
+coroutines-version = '1.7.2'
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -70,9 +85,25 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room-vers
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room-version" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room-version" }
 
+# JUnit
+junit5 = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit5-version" }
+
+# Testing
+test-mockk = { module = "io.mockk:mockk", version.ref = "mockk-version" }
+test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "android-test-core-ktx-version" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-version" }
+
+junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junit-ext-version" }
+
+# Detekt
+detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt-version" }
+detekt-cli = { group = "io.gitlab.arturbosch.detekt", name = "detekt-cli", version.ref = "detekt-version" }
+detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt-version" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 com-android-library = { id = "com.android.library", version.ref = "agp" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-version" }
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt-version" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-version" }

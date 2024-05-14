@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,12 +20,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.joaoferreira.techchallenge.R
 import com.joaoferreira.techchallenge.allapps.domain.AppDetails
 import com.joaoferreira.techchallenge.allapps.presentation.ui.AppsViewModel
 
@@ -94,6 +98,9 @@ fun AppList(appsViewModel: AppsViewModel = hiltViewModel()) {
     }
 }
 
+/**
+ * Popup composable
+ */
 @Composable
 fun Popup(
     appDetails: AppDetails,
@@ -127,7 +134,13 @@ fun Popup(
                         .padding(16.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Button(onClick = { setDemoModeWarning(true) }) {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(R.color.aptoide_orange),
+                            contentColor = Color.White
+                        ),
+                        onClick = { setDemoModeWarning(true) }
+                    ) {
                         Text(text = "Download")
                     }
                 }
@@ -154,6 +167,7 @@ private fun AppIcon(background: String) {
     )
 }
 
+@Suppress("MagicNumber")
 private fun Long.toMegabytesText(): String {
     val megaBytes = (this.toDouble() / (1024 * 1024))
     return "%.1f".format(megaBytes)

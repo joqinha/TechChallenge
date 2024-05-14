@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joaoferreira.techchallenge.allapps.presentation.ui.AppsViewModel
+import com.joaoferreira.techchallenge.utils.AppConstants.EDITORS_CHOICE_RATING
 
 /**
  * Composable containing the editors choice list
@@ -26,7 +27,7 @@ fun EditorsChoiceList(appsViewModel: AppsViewModel = hiltViewModel()) {
     val allAppsFlow = appsViewModel.listOfApps.collectAsState()
     val stateSize = rememberLazyListState(Int.MAX_VALUE / 2)
 
-    val editorsChoiceList = allAppsFlow.value.filter { it.rating > 4.5 }
+    val editorsChoiceList = allAppsFlow.value.filter { it.rating > EDITORS_CHOICE_RATING }
 
     if (editorsChoiceList.isNotEmpty()) {
         Column {

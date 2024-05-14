@@ -27,6 +27,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":common"))
+
     implementation(rootProject.libs.androidx.core.ktx)
 
     implementation(rootProject.libs.compose.ui)

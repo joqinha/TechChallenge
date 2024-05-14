@@ -23,3 +23,5 @@ rootProject.name = "TechChallenge"
 include(":app")
 include("allapps")
 project(":allapps").projectDir = file("allapps")
+include(":common")
+project(":common").projectDir = file("common")

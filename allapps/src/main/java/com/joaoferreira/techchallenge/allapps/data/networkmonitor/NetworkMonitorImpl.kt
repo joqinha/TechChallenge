@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
+/**
+ * Implementation of NetworkMonitor
+ */
 class NetworkMonitorImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : NetworkMonitor {

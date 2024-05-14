@@ -1,13 +1,10 @@
 package com.joaoferreira.techchallenge.presentation.ui.compose.applist
 
-import android.service.autofill.OnClickAction
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -22,17 +19,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.joaoferreira.techchallenge.R
+import com.joaoferreira.techchallenge.utils.AppConstants.ASPECT_RATIO_BACKGROUND_CARD
 
 /**
  * Composable containing the app card
@@ -95,7 +90,7 @@ private fun AppCardBackground(background: String) {
         contentScale = ContentScale.Crop,
         modifier = Modifier
             .width(90.dp)
-            .aspectRatio(3f / 4f)
+            .aspectRatio(ASPECT_RATIO_BACKGROUND_CARD)
             .padding(bottom = 4.dp),
         alignment = Alignment.Center,
     )

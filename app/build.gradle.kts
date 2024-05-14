@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation(project(":allapps"))
+    implementation(project(":common"))
 
     implementation(rootProject.libs.androidx.core.ktx)
     implementation(rootProject.libs.androidx.appcompat)

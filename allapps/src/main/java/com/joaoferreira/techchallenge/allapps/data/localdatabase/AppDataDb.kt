@@ -4,6 +4,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 
+/**
+ * Data class for the AppsDatabase
+ */
 @Entity(tableName = "appsTable")
 data class AppInfo(
     @PrimaryKey val id: Long,
@@ -16,12 +19,21 @@ data class AppInfo(
     val graphicUrl: String? = "",
 )
 
+/**
+ * Auxiliary converters for json
+ */
 class ListStringConverter {
+    /**
+     * Auxiliary converters for json
+     */
     @TypeConverter
     fun fromString(value: String): List<String> {
         return value.split(",")
     }
 
+    /**
+     * Auxiliary converters for json
+     */
     @TypeConverter
     fun fromList(list: List<String>): String {
         return list.joinToString(",")

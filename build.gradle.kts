@@ -10,6 +10,10 @@ plugins {
     alias(libs.plugins.com.android.library) apply false
 }
 
+tasks.register<Delete>("cleanAll") {
+    delete(rootProject.buildDir)
+}
+
 subprojects {
     apply(plugin = rootProject.libs.plugins.detekt.get().pluginId)
 

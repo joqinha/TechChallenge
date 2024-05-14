@@ -48,4 +48,10 @@ dependencies {
     implementation(rootProject.libs.room.runtime)
     implementation(rootProject.libs.room.ktx)
     ksp(rootProject.libs.room.compiler)
+
+    testImplementation(rootProject.libs.junit5)
+    testImplementation(rootProject.libs.test.mockk)
+    testImplementation(rootProject.libs.coroutines.test)
+    testImplementation(rootProject.libs.test.core.ktx)
+
 }

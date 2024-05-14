@@ -4,9 +4,9 @@
 
     <application
         android:name=".TechChallengeApplication"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/aptoide_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/aptoide_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.TechChallenge">
 

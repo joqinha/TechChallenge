@@ -1,4 +1,4 @@
-package com.joaoferreira.techchallenge.allapps.domain
+package com.joaoferreira.techchallenge.allapps.domain.response
 
 import com.google.gson.annotations.SerializedName
 

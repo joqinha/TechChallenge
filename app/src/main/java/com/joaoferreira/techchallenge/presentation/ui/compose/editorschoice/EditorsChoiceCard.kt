@@ -26,10 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.joaoferreira.techchallenge.R
 
 /**
  * Composable containing the editors choice card
@@ -87,6 +89,7 @@ fun EditorsChoiceCard(
 private fun EditorsChoiceBackground(background: String) {
     AsyncImage(
         model = background,
+        error = painterResource(R.drawable.aptoide_logo),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = Modifier

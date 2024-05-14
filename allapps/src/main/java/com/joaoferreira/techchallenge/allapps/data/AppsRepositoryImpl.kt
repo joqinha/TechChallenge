@@ -1,43 +1,164 @@
 package com.joaoferreira.techchallenge.allapps.data
 
 import android.util.Log
-import com.google.gson.reflect.TypeToken
-import com.joaoferreira.techchallenge.allapps.domain.AppData
+import com.joaoferreira.techchallenge.allapps.data.localdatabase.AppDao
+import com.joaoferreira.techchallenge.allapps.data.localdatabase.AppInfo
+import com.joaoferreira.techchallenge.allapps.data.networkmonitor.NetworkMonitor
+import com.joaoferreira.techchallenge.allapps.domain.AppDetails
+import com.joaoferreira.techchallenge.allapps.domain.network.NetworkStatus
+import com.joaoferreira.techchallenge.allapps.domain.response.AppData
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
-
 
 class AppsRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
+    private val appDao: AppDao,
+    private val networkMonitor: NetworkMonitor,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AppsRepository {
 
-    override fun getListApps(): Flow<List<AppData>> = flow {
-        try {
-            val response = apiService.listApps().execute()
-            if (response.isSuccessful) {
+    private val _appDetailsList = MutableStateFlow<List<AppDetails>>(emptyList())
+    private val appDetailsList = _appDetailsList.asStateFlow()
 
-                if (response.body()?.status == "OK") {
-                    val apps = response.body()?.responses?.listApps?.datasets?.all?.data?.list
-                        ?: emptyList()
-                    Log.d("Teste", "getListApps: $apps")
-                    emit(apps)
-                } else {
-                    Log.i("Teste", "getListApps: Unsuccessful response: ${response.body()?.status}")
-                    emit(emptyList())
+    private var localAppDetails: List<AppDetails> = emptyList()
+
+    init {
+        observeChangesInNetworking()
+    }
+
+    override fun getListApps(): Flow<List<AppDetails>> = appDetailsList
+
+    private fun observeChangesInNetworking() {
+        CoroutineScope(dispatcher).launch {
+            networkMonitor.networkStatus.collect {
+                Log.d("AppsRepositoryImpl", "observeChangesInNetworking: $it")
+                if (it == NetworkStatus.INITIAL ||
+                    it == NetworkStatus.AVAILABLE ||
+                    it == NetworkStatus.LINK_PROPERTIES_CHANGED) {
+                    val fetchedApps = fetchAppDetailsFromApi()
+                    updateDb(fetchedApps)
+                    updateAppDetailsList(fetchedApps)
+                } else if (it == NetworkStatus.LOST) {
+                    val localApps = loadAppsFromLocalDb()
+                    updateAppDetailsList(localApps)
                 }
-
-            } else {
-                Log.i("Teste", "getListApps: Unsuccessful response: ${response.code()}")
-                emit(emptyList())
             }
-        } catch (e: Exception) {
-            Log.i("Teste", "getListApps: Exception ${e.message}")
-            emit(emptyList())
         }
-    }.flowOn(dispatcher)
+    }
+
+    private fun updateAppDetailsList(updatedList: List<AppDetails>) {
+        _appDetailsList.value = updatedList
+        Log.d("AppsRepositoryImpl", "updateAppDetailsList: ${_appDetailsList.value}")
+    }
+
+    private suspend fun fetchAppDetailsFromApi(): List<AppDetails> {
+        return withContext(dispatcher) {
+            try {
+                val response = apiService.listApps().execute()
+                if (response.isSuccessful) {
+
+                    if (response.body()?.status == "OK") {
+                        val apps = response.body()?.responses?.listApps?.datasets?.all?.data?.list
+                            ?: emptyList()
+                        Log.d("AppsRepositoryImpl", "fetchAppDetailsFromApi: $apps")
+                        val appDetailsList = convertListAppDataToAppDetails(apps)
+                        return@withContext appDetailsList
+                    } else {
+                        Log.d(
+                            "AppsRepositoryImpl",
+                            "fetchAppDetailsFromApi: Unsuccessful status: ${response.body()?.status}"
+                        )
+                        return@withContext localAppDetails
+                    }
+                } else {
+                    Log.d(
+                        "AppsRepositoryImpl",
+                        "fetchAppDetailsFromApi: Unsuccessful response: ${response.code()}"
+                    )
+                }
+            } catch (e: Exception) {
+                Log.d("AppsRepositoryImpl", "fetchAppDetailsFromApi: Exception ${e.message}")
+
+            }
+            return@withContext localAppDetails
+        }
+    }
+
+    private suspend fun updateDb(appDetailsList: List<AppDetails>) {
+        Log.d("AppsRepositoryImpl", "updateDb: $appDetailsList")
+        appDao.deleteAllEntries()
+        val appInfoList = convertListAppDetailsToAppInfo(appDetailsList)
+        appInfoList.forEach { appDao.insertApp(it) }
+    }
+
+    private suspend fun loadAppsFromLocalDb(): List<AppDetails> {
+        try {
+            val appInfoList = appDao.getAllApps()
+            if (appInfoList.isEmpty()) {
+                Log.d("AppsRepositoryImpl", "loadAppsFromLocalDb: No data in DB")
+                return emptyList()
+            }
+            val appDetailsList = mutableListOf<AppDetails>()
+            for (appInfo in appInfoList) {
+                val appDetails = AppDetails(
+                    id = appInfo.id,
+                    name = appInfo.name ?: "",
+                    versionName = appInfo.versionName ?: "",
+                    size = appInfo.size ?: 0,
+                    downloads = appInfo.downloads ?: 0,
+                    rating = appInfo.rating ?: 0.0,
+                    iconUrl = appInfo.iconUrl ?: "",
+                    graphicUrl = appInfo.graphicUrl ?: "",
+                )
+                appDetailsList.add(appDetails)
+            }
+            Log.d("AppsRepositoryImpl", "loadAppsFromLocalDb: $appDetailsList")
+            return appDetailsList
+        } catch (e: Exception) {
+            Log.d("AppsRepositoryImpl", "loadAppsFromLocalDb: Exception ${e.message}")
+            return emptyList()
+        }
+    }
+
+    private fun convertListAppDataToAppDetails(appDataList: List<AppData>): List<AppDetails> {
+        val appDetailsList = mutableListOf<AppDetails>()
+        for (appData in appDataList) {
+            val appDetails = AppDetails(
+                id = appData.id,
+                name = appData.name,
+                versionName = appData.versionName,
+                size = appData.size,
+                downloads = appData.downloads,
+                rating = appData.rating,
+                iconUrl = appData.iconUrl,
+                graphicUrl = appData.graphicUrl,
+            )
+            appDetailsList.add(appDetails)
+        }
+        return appDetailsList
+    }
+
+    private fun convertListAppDetailsToAppInfo(appDetailsList: List<AppDetails>): List<AppInfo> {
+        val appInfoList = mutableListOf<AppInfo>()
+        for (appDetails in appDetailsList) {
+            val appInfo = AppInfo(
+                id = appDetails.id,
+                name = appDetails.name,
+                size = appDetails.size,
+                downloads = appDetails.downloads,
+                rating = appDetails.rating,
+                iconUrl = appDetails.iconUrl,
+                graphicUrl = appDetails.graphicUrl,
+            )
+            appInfoList.add(appInfo)
+        }
+        return appInfoList
+    }
 }

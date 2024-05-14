@@ -1,64 +1,42 @@
 package com.joaoferreira.techchallenge.allapps.di
 
+import android.content.Context
+import android.net.ConnectivityManager
+import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.joaoferreira.techchallenge.allapps.data.ApiService
+import com.joaoferreira.techchallenge.allapps.data.localdatabase.AppDao
 import com.joaoferreira.techchallenge.allapps.data.AppsRepository
 import com.joaoferreira.techchallenge.allapps.data.AppsRepositoryImpl
+import com.joaoferreira.techchallenge.allapps.data.localdatabase.AppDatabase
+import com.joaoferreira.techchallenge.allapps.data.networkmonitor.NetworkMonitor
+import com.joaoferreira.techchallenge.allapps.data.networkmonitor.NetworkMonitorImpl
+import com.joaoferreira.techchallenge.allapps.domain.network.NetworkStatus
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class DataModule {
-
-    @Provides
-    fun provideBaseUrl(): String = "https://ws2.aptoide.com/"
-
-    @Provides
-    fun provideGson(): Gson = GsonBuilder().setLenient().create()
-
-    @Provides
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-        return interceptor
-    }
-
-    @Provides
-    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .build()
-    }
-
-    @Provides
-    fun provideRetrofit(
-        baseUrl: String,
-        gson: Gson,
-        okHttpClient: OkHttpClient
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-    }
-
-    @Provides
-    fun provideApiService(retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
-    }
-
     @Singleton
     @Provides
-    fun provideAppsRepository(apiService: ApiService): AppsRepository = AppsRepositoryImpl(apiService)
+    fun provideAppsRepository(
+        apiService: ApiService,
+        appDao: AppDao,
+        networkMonitor: NetworkMonitor
+    ): AppsRepository = AppsRepositoryImpl(apiService, appDao, networkMonitor)
 }

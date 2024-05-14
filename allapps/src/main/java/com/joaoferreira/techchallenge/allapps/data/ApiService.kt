@@ -1,6 +1,6 @@
 package com.joaoferreira.techchallenge.allapps.data
 
-import com.joaoferreira.techchallenge.allapps.domain.ApiResponse
+import com.joaoferreira.techchallenge.allapps.domain.response.ApiResponse
 import retrofit2.Call
 import retrofit2.http.GET
 

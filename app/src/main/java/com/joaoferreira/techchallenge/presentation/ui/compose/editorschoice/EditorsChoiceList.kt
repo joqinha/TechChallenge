@@ -28,41 +28,43 @@ fun EditorsChoiceList(appsViewModel: AppsViewModel = hiltViewModel()) {
 
     val editorsChoiceList = allAppsFlow.value.filter { it.rating > 4.5 }
 
-    Column {
-        if (editorsChoiceList.isNotEmpty()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "Editors choice",
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(end = 20.dp),
-                    text = "More",
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-
-            LazyRow(
-                modifier = Modifier.testTag("AppList"),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(
-                    4.dp
-                ),
-                state = stateSize,
-            ) {
-                items(Int.MAX_VALUE) { appItem ->
-                    val app = editorsChoiceList[appItem % editorsChoiceList.size]
-                    EditorsChoiceCard(
-                        imageUrl = app.graphicUrl ?: app.iconUrl ?: "",
-                        description = app.name,
-                        rating = app.rating.toFloat()
+    if (editorsChoiceList.isNotEmpty()) {
+        Column {
+            if (editorsChoiceList.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = "Editors choice",
+                        style = MaterialTheme.typography.titleLarge,
                     )
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(end = 20.dp),
+                        text = "More",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+
+                LazyRow(
+                    modifier = Modifier.testTag("AppList"),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(
+                        4.dp
+                    ),
+                    state = stateSize,
+                ) {
+                    items(Int.MAX_VALUE) { appItem ->
+                        val app = editorsChoiceList[appItem % editorsChoiceList.size]
+                        EditorsChoiceCard(
+                            imageUrl = app.graphicUrl ?: app.iconUrl ?: "",
+                            description = app.name,
+                            rating = app.rating.toFloat()
+                        )
+                    }
                 }
             }
         }

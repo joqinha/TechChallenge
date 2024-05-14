@@ -42,4 +42,8 @@ dependencies {
     implementation(rootProject.libs.okhttp3)
     implementation(rootProject.libs.okhttp3.interceptor)
     implementation(rootProject.libs.moshi)
+
+    implementation(rootProject.libs.room.runtime)
+    implementation(rootProject.libs.room.ktx)
+    ksp(rootProject.libs.room.compiler)
 }

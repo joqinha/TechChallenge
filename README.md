@@ -22,9 +22,12 @@ This Android application fetches and displays a list of applications from Aptoid
 
 ## Improvements
 
-1. Caching the background/images
-2. Send the notification only when the list of apps is different than previous list.
-3. Improve testing.
+1. Send the notification only when the list of apps is different than previous list.
+2. Improve testing.
+3. Improve UI/UX.
+
+## Know Issues/Bugs
+1. Tap on periodic Notification does not open app.
 
 ## Results
 APK and Demo available in results folder

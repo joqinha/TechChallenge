@@ -58,6 +58,8 @@ dependencies {
     implementation(rootProject.libs.hilt.android)
     implementation(rootProject.libs.hilt.navigation.compose)
     ksp(rootProject.libs.hilt.compiler)
+    implementation(rootProject.libs.work.runtime.ktx)
+    implementation(rootProject.libs.hilt.work)
 
     testImplementation(rootProject.libs.junit)
     androidTestImplementation(rootProject.libs.androidx.junit)

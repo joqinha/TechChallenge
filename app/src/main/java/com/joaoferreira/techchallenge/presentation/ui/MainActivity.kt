@@ -7,8 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.joaoferreira.techchallenge.domain.notification.NotificationWorker
 import com.joaoferreira.techchallenge.presentation.ui.compose.MainApp
+import com.joaoferreira.techchallenge.utils.AppConstants.DELAY_BETWEEN_NOTIFICATIONS
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 
 /**
  * MainActivity
@@ -24,5 +29,15 @@ class MainActivity : ComponentActivity() {
                 MainApp()
             }
         }
+
+        periodicWorker()
+    }
+
+    private fun periodicWorker() {
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<NotificationWorker>(
+            repeatInterval = DELAY_BETWEEN_NOTIFICATIONS,
+            TimeUnit.MINUTES
+        ).setInitialDelay(DELAY_BETWEEN_NOTIFICATIONS, TimeUnit.MINUTES).build()
+        WorkManager.getInstance(this).enqueue(periodicWorkRequest)
     }
 }

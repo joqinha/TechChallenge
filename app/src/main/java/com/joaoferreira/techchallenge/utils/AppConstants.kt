@@ -10,6 +10,7 @@ object AppConstants {
      */
     const val EDITORS_CHOICE_RATING = 4.5f
     const val ASPECT_RATIO_BACKGROUND_CARD = 3f / 4f
+    const val DELAY_BETWEEN_NOTIFICATIONS = 30L
 
     /**
      * Constant variables related to Logs
